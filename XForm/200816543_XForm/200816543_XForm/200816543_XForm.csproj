@@ -53,14 +53,21 @@
     <Compile Include="ambito\Ambito.cs" />
     <Compile Include="ambito\Declaracion.cs" />
     <Compile Include="ambito\Simbolo.cs" />
+    <Compile Include="ambito\simbolos\Funcion.cs" />
+    <Compile Include="ambito\simbolos\Principal.cs" />
     <Compile Include="Analizadores\Accion.cs" />
     <Compile Include="Analizadores\Analizador.cs" />
+    <Compile Include="Analizadores\ConstructorAst.cs" />
     <Compile Include="Analizadores\Gramatica.cs" />
     <Compile Include="ast\AST.cs" />
+    <Compile Include="ast\funcionesEspeciales\Imprimir.cs" />
     <Compile Include="ast\miBase\Exp.cs" />
     <Compile Include="ast\miBase\Instruccion.cs" />
     <Compile Include="ast\miBase\miClase.cs" />
     <Compile Include="ast\miBase\NodoAST.cs" />
+    <Compile Include="ast\valorImplicito\Identificador.cs" />
+    <Compile Include="ast\valorImplicito\Operacion.cs" />
+    <Compile Include="ast\valorImplicito\Tipo_Prim.cs" />
     <Compile Include="Diseño\DiseñoComponentes.cs" />
     <Compile Include="XForm.cs">
       <SubType>Form</SubType>

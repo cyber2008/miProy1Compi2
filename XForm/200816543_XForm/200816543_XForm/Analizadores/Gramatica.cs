@@ -30,7 +30,7 @@ namespace _200816543_XForm.Analizadores
                 miCaracter = ToTerm("caracter"),
                 miBooleano = ToTerm("booleano"),
                 miVacio = ToTerm("vacio"),
-                miPrincipal = ToTerm("principal"),
+                miPrincipal = ToTerm("principal", "miPrincipal"),
                 miRetorno = ToTerm("retorno"),
                 miRomper = ToTerm("romper"),
                 miDefecto = ToTerm("defecto"),
@@ -147,41 +147,42 @@ namespace _200816543_XForm.Analizadores
             ;
             #endregion
 
-            S.Rule = EXP; 
-                //CUERPO;
+            S.Rule = //EXP; 
+                CUERPO;
 
-/*            CUERPO.Rule = MakePlusRule(CUERPO, CAMPOS);
+            CUERPO.Rule = MakePlusRule(CUERPO, CAMPOS);
 
             CAMPOS.Rule = METODO
-                        | DECLARACION
-                        | id
+                        //| DECLARACION
+                        //| id
                         //| SENTENCIA_CLASE
                         ;
 
-            METODO.Rule = TIPO + id + parizq + LISTA_PARAM + parder + SENTENCIAS
-                        | id + id + parizq + LISTA_PARAM + parder + SENTENCIAS
-                        | TIPO + id + parizq + parder + SENTENCIAS
-                        | id + id + parizq +parder + SENTENCIAS
-                        | TIPO + miPrincipal + parizq + parder + SENTENCIAS
+            METODO.Rule = //TIPO + id + parizq + LISTA_PARAM + parder + SENTENCIAS
+                        //| id + id + parizq + LISTA_PARAM + parder + SENTENCIAS
+                        //| TIPO + id + parizq + parder + SENTENCIAS
+                        //| id + id + parizq +parder + SENTENCIAS
+                        //| 
+                        TIPO + miPrincipal + parizq + parder + SENTENCIAS
                         ;
 
-            LISTA_PARAM.Rule = MakePlusRule(LISTA_PARAM, coma, PARAMETRO);
+            //LISTA_PARAM.Rule = MakePlusRule(LISTA_PARAM, coma, PARAMETRO);
 
-            PARAMETRO.Rule = TIPO + id;
+            //PARAMETRO.Rule = TIPO + id;
 
             SENTENCIAS.Rule = llaveizq + LISTA_SENTENCIA+ llaveder;
 
             LISTA_SENTENCIA.Rule = MakePlusRule(LISTA_SENTENCIA, SENTENCIA);
 
             SENTENCIA.Rule = DECLARACION + ptComa
-                              | ASIGNACION + ptComa
+                              /*| ASIGNACION + ptComa
                               | ACCESO + ptComa
                               | LLAMADA + ptComa
                               | SENTENCIA_IF
                               | SENTENCIA_WHILE
                               | SENTENCIA_RETURN + ptComa
                               | SENTENCIA_BREAK + ptComa
-                              | SENTENCIA_CONTINUE + ptComa
+                              | SENTENCIA_CONTINUE + ptComa*/
                               | SENTENCIA_PRINT + ptComa
                               //| SENTENCIA_CLASE + ptComa
                               ;
@@ -191,13 +192,13 @@ namespace _200816543_XForm.Analizadores
                             | id + id
                             ;
 
-            ASIGNACION.Rule = LISTA_IDS + "=" + EXP
+            /*ASIGNACION.Rule = LISTA_IDS + "=" + EXP
                               | id + "." + id + "=" + EXP
-                              ;
+                              ;*/
 
             LISTA_IDS.Rule = MakePlusRule(LISTA_IDS, coma, id);
 
-            SENTENCIA_IF.Rule = miIf + parizq + EXP + parder + SENTENCIAS
+            /*SENTENCIA_IF.Rule = miIf + parizq + EXP + parder + SENTENCIAS
                                 | miIf + parizq + EXP + parder + SENTENCIAS + miElse + SENTENCIAS
                                 ;
 
@@ -209,13 +210,13 @@ namespace _200816543_XForm.Analizadores
 
             SENTENCIA_BREAK.Rule = miRomper;
 
-            SENTENCIA_CONTINUE.Rule = miContinuar;
+            SENTENCIA_CONTINUE.Rule = miContinuar;*/
 
-            SENTENCIA_PRINT.Rule = miPrint + parizq + LISTA_ATRI + parder;
+            SENTENCIA_PRINT.Rule = miPrint + parizq + EXP + parder;
 
             //Pendiente sentencia struct
 
-            LLAMADA.Rule = id + parizq + LISTA_ARG + parder
+            /*LLAMADA.Rule = id + parizq + LISTA_ARG + parder
                           | id + parizq + parder
                           ;
 
@@ -263,7 +264,7 @@ namespace _200816543_XForm.Analizadores
                         | id
                         ;
 
-            /*LISTA_ARG.Rule = MakeStarRule(LISTA_ARG, coma, EXP);
+            /*LISTA_ARG.Rule = MakeStarRule(LISTA_ARG, coma, EXP);*/
 
             TIPO.Rule = miBooleano
                 | miCaracter
@@ -271,7 +272,7 @@ namespace _200816543_XForm.Analizadores
                 | miEntero
                 | miDecimal
                 | miVacio
-                ;*/
+                ;
 
             this.Root = S;
 
@@ -288,7 +289,7 @@ namespace _200816543_XForm.Analizadores
             RegisterOperators(9, Associativity.Right, masMas, menosMenos, not);
             
 
-            MarkPunctuation(parizq, parder, llaveder, llaveizq, ptComa, coma);
+            MarkPunctuation(parizq, parder, llaveder, llaveizq, ptComa, coma, igual);
             
 
             /*RegisterOperators(1, "||");

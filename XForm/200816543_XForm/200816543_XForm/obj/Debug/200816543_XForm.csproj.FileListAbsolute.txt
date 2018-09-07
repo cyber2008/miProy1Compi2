@@ -9,3 +9,4 @@ C:\Users\eliu\Dropbox\compi2_2sem_2018\Proyecto1\XForm\200816543_XForm\200816543
 C:\Users\eliu\Dropbox\compi2_2sem_2018\Proyecto1\XForm\200816543_XForm\200816543_XForm\obj\Debug\200816543_XForm.exe
 C:\Users\eliu\Dropbox\compi2_2sem_2018\Proyecto1\XForm\200816543_XForm\200816543_XForm\obj\Debug\200816543_XForm.pdb
 C:\Users\eliu\Dropbox\compi2_2sem_2018\Proyecto1\XForm\200816543_XForm\200816543_XForm\obj\Debug\_200816543_XForm.Form1.resources
+C:\Users\eliu\Dropbox\compi2_2sem_2018\Proyecto1\XForm\200816543_XForm\200816543_XForm\obj\Debug\200816543_XForm.csprojAssemblyReference.cache

@@ -1,5 +1,9 @@
 ﻿using _200816543_XForm.Acciones;
+using _200816543_XForm.ambito;
+using _200816543_XForm.ambito.simbolos;
 using _200816543_XForm.Analizadores;
+using _200816543_XForm.ast;
+using _200816543_XForm.ast.miBase;
 using Irony.Parsing;
 using System;
 using System.Collections;
@@ -44,7 +48,76 @@ namespace _200816543_XForm.Diseño
             ParseTree arbol = analizar.isValid(strCodigoaEvaluar);
             if (arbol != null)
             {
-                analizar.parse(arbol, new PrimeraPasada());
+                ConstructorAst constAst = new ConstructorAst();
+                AST arbolAux = constAst.Analizar(arbol.Root);
+                Ambito global = new Ambito(null);
+
+                try {
+
+                    if (arbolAux != null)
+                    {
+                        foreach (Instruccion inst in arbolAux.Instrucciones) {
+                            //if (inst is Funcion) {
+
+                            //}
+                            if (inst is Declaracion) {
+                                Declaracion declaracion = (Declaracion)inst;
+                                declaracion.ejecutar(global, arbolAux);
+                            }
+                            //toca deficion clase
+
+                        }
+
+                        foreach (Instruccion ins in arbolAux.Instrucciones)
+                        {
+                            if (ins is Funcion)
+                            {
+                                Funcion funcion = (Funcion)ins;
+                                global.agregar(funcion.Id, funcion);
+                                foreach (NodoAST instruccion in funcion.LLInstrucciones)
+                                {
+                                    //if (instruccion is DefinicionStruct)
+                                    //{
+                                    //    DefinicionStruct crear = (DefinicionStruct)instruccion;
+                                    //    crear.ejecutar(global, auxArbol);
+                                    //}
+                                }
+                            }
+                            if (ins is Declaracion)
+                            {
+                                Declaracion declaracion = (Declaracion)ins;
+                                declaracion.ejecutar(global, arbolAux);
+                            }
+                            //if (ins is DefinicionStruct)
+                            //{
+                            //    DefinicionStruct crear = (DefinicionStruct)ins;
+                            //    crear.ejecutar(global, auxArbol);
+                            //}
+
+                        }
+
+                        foreach (Instruccion ins in arbolAux.Instrucciones)
+                        {
+                            if (ins is Principal)
+                            {
+                                Principal main = (Principal)ins;
+                              
+                                Ambito local = new Ambito(global);
+
+                                main.ejecutar(local, arbolAux);
+                            }
+                        }
+                    }
+                    else {
+                        MessageBox.Show("Cadena invalida");
+                    }
+
+                }
+                catch(Exception ex) {
+                    MessageBox.Show(ex.ToString());
+                }
+
+                //analizar.parse(arbol, new PrimeraPasada());
                 MessageBox.Show("Cadena Valida");
             }
             else
