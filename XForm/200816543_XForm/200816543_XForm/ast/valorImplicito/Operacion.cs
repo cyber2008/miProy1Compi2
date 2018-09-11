@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace _200816543_XForm.ast.valorImplicito
 {
     //Clase para representar operaciones aritmeticas, logicas y relacionales
-    public class Operacion:Exp
+    public class Operacion : Exp
     {
 
         public enum Operador
@@ -18,6 +18,7 @@ namespace _200816543_XForm.ast.valorImplicito
             RESTA,
             MULTIPLICACION,
             DIVISION,
+            MODULO,
             POTENCIA,
             MENOS_UNARIO,
             MAYOR_QUE,
@@ -49,6 +50,8 @@ namespace _200816543_XForm.ast.valorImplicito
                     return Operador.MULTIPLICACION;
                 case "/":
                     return Operador.DIVISION;
+                case "%":
+                    return Operador.MODULO;
                 case "^":
                     return Operador.POTENCIA;
                 case ">":
@@ -67,12 +70,15 @@ namespace _200816543_XForm.ast.valorImplicito
                     return Operador.OR;
                 case "&&":
                     return Operador.AND;
+                case "!":
+                    return Operador.NOT;
                 default:
                     return Operador.DESCONOCIDO;
             }
         }
 
-        public Operacion(Exp op1, Exp op2, Operador signoOp) {
+        public Operacion(Exp op1, Exp op2, Operador signoOp)
+        {
             this.ope1 = op1;
             this.ope2 = op2;
             this.signoOp = signoOp;
@@ -121,9 +127,29 @@ namespace _200816543_XForm.ast.valorImplicito
             }
             switch (signoOp)
             {
+                #region Suma
                 case Operador.SUMA:
+                    //Tipo resultante de datos: Bool
+                    if (op1 is bool && op2 is bool)//Booleano - Booleano
+                    {
+                        return (bool)op1 || (bool)op2;
+                    }
+                    else if (op1 is bool && op2 is double)//Booleano - Numerico
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 + (double)op2;
+                    }
+                    else if (op1 is bool && op2 is int)//Booleano - Numerico
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 + (int)op2;
+                    }
+                    else if (op1 is bool && op2 is string) {
+                        string strResult = (string)op1 + "" + op2;
+                        return strResult;
+                    }
                     //Tipo resultante de datos: Decimal
-                    if (op1 is int && op2 is double)
+                    else if (op1 is int && op2 is double)
                     {
                         return (int)op1 + (double)op2;
                     }
@@ -139,11 +165,7 @@ namespace _200816543_XForm.ast.valorImplicito
                     {
                         return (int)((char)(op1)) + (double)op2;
                     }
-                    else if (op1 is bool && op2 is double)
-                    {
-                        int o1 = (bool)op1 ? 1 : 0;
-                        return o1 + (double)op2;
-                    }
+
                     else if (op1 is double && op2 is bool)
                     {
                         int o2 = (bool)op1 ? 1 : 0;
@@ -161,11 +183,6 @@ namespace _200816543_XForm.ast.valorImplicito
                     {
                         return (int)((char)op1) + (int)op2;
                     }
-                    else if (op1 is bool && op2 is int)
-                    {
-                        int o1 = (bool)op1 ? 1 : 0;
-                        return o1 + (int)op2;
-                    }
                     else if (op1 is int && op2 is bool)
                     {
                         int o2 = (bool)op1 ? 1 : 0;
@@ -178,20 +195,864 @@ namespace _200816543_XForm.ast.valorImplicito
                     else if (op1 is string || op2 is string)
                     {
                         return op1.ToString() + op2.ToString();
+                    }
+                    else
+                    {
+                        Console.WriteLine("error de tipos en suma");
+                        //Program.getGUI().appendSalida("Error de tipos en la suma");
+                    }
+                    break;
+                #endregion
+
+                #region Resta
+                case Operador.RESTA:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 - (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 - (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 - (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) - (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 - (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 - o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 - (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 - (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) - (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 - (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 - o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 - (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " menos para dos cadenas");
+                        return null;
                     } //Tipo resultante de datos: Bool
                     else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " menos para dos boolos");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region Multiplicacion
+                case Operador.MULTIPLICACION:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 * (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 * (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 * (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) * (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 * (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 * o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 * (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 * (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) * (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 * (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 * o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 * (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " por para dos cadenas");
+                        return null;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        return (bool)op1 && (bool)op2;
+                    }
+                    break;
+                #endregion
+                
+                #region Division
+                case Operador.DIVISION:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        if ((double)op2 != 0.0)
+                        {
+                            return (int)op1 / (double)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        if ((int)op2 != 0)
+                        {
+                            return (double)op1 / (int)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        if ((int)((char)(op2)) != 0)
+                        {
+                            return (double)op2 / (int)((char)(op2));
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        if ((double)op2 != 0.0)
+                        {
+                            return (int)((char)(op1)) / (double)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        if ((double)op2 != 0.0)
+                        {
+                            return o1 / (double)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        if (o2 != 0)
+                        {
+                            return (double)op1 / o2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        if ((double)op2 != 0.0)
+                        {
+                            return (double)op1 / (double)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        if ((int)((char)(op2)) != 0)
+                        {
+                            return (int)op1 / (int)((char)op2);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        if ((int)op2 != 0)
+                        {
+                            return (int)((char)op1) / (int)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        if ((int)op2 != 0)
+                        {
+                            return o1 / (int)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        if (o2 != 0)
+                        {
+                            return (int)op1 / o2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        if ((int)op2 != 0)
+                        {
+                            return (int)op1 / (int)op2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Excepcion aritmetica: division(/) por cero");
+                            return null;
+                        }
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " division para dos cadenas");
+                        return null;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " division para dos boolos");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region Potencia
+                case Operador.POTENCIA:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return Math.Pow((int)op1, (double)op2);
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return Math.Pow((double)op1, (int)op2);
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return Math.Pow((double)op2, (int)((char)(op2)));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return Math.Pow((int)((char)(op1)), (double)op2);
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return Math.Pow(o1, (double)op2);
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return Math.Pow((double)op1, o2);
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return Math.Pow((double)op1, (double)op2);
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return Math.Pow((int)op1, (int)((char)op2));
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return Math.Pow((int)((char)op1), (int)op2);
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return Math.Pow(o1, (int)op2);
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return Math.Pow((int)op1, o2);
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return Math.Pow((int)op1, (int)op2);
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " potencia para dos cadenas");
+                        return null;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " potencia para dos boolos");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region Modulo
+                case Operador.MODULO:
+                    if (op1 is int && op2 is int) {
+                        return (int)op1 % (int)op2;
+                    } else if (op1 is int && op2 is double) {
+                        return (int)op1 % (double)op2;
+                    }
+                    else if (op1 is double && op2 is int) {
+                        return (double)op1%(int)op2;
+                    }
+                    else if (op1 is double && op2 is double) {
+                        return (double)op1 % (double)op2;
+                    } else if (op1 is bool && op2 is int) {
+
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return o2 % (int)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        double o2 = (bool)op1 ? 1 : 0;
+                        return 02 % (double)op2;
+                        //return (double)op1 % o2;
+                    }
+                    else
+                    {
+                        Console.WriteLine("error de tipos en modulo");
+                    }
+                    break;
+                #endregion
+
+                #region MayorQue
+                case Operador.MAYOR_QUE:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 > (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 > (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 > (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) > (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 > (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 > o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 > (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 > (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) > (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 > (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 > o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 > (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        return op1.ToString().Length > op2.ToString().Length;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " mayor que para dos bools");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region MayorIgualQue
+                case Operador.MAYOR_IGUAL_QUE:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 >= (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 >= (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 >= (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) >= (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 >= (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 >= o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 >= (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 >= (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) >= (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 >= (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 >= o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 >= (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        return op1.ToString().Length > op2.ToString().Length;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " mayor igual que para dos bools");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region MenorQue
+                case Operador.MENOR_QUE:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 < (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 < (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 < (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) < (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 < (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 < o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 < (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 < (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) < (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 < (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 < o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 < (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        return op1.ToString().Length < op2.ToString().Length;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " menor que para dos boolos");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region MenorIgualQue
+                case Operador.MENOR_IGUAL_QUE:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 <= (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 <= (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 <= (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) <= (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 <= (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 <= o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 <= (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 <= (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) <= (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 <= (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 <= o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 <= (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        return op1.ToString().Length <= op2.ToString().Length;
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo el operador"
+                                + " menor que para dos boolos");
+                        return null;
+                    }
+                    break;
+                #endregion
+
+                #region IgualIgual
+                case Operador.IGUAL_IGUAL:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 == (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 == (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 == (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) == (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 == (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 == o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 == (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 == (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) == (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 == (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 == o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 == (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        return op1.ToString().Equals(op2.ToString());
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        return (bool)op1 == (bool)op2;
+                    }
+                    break;
+                #endregion
+
+                #region DiferenteQue
+                case Operador.DIFERENTE_QUE:
+                    //Tipo resultante de datos: Decimal
+                    if (op1 is int && op2 is double)
+                    {
+                        return (int)op1 != (double)op2;
+                    }
+                    else if (op1 is double && op2 is int)
+                    {
+                        return (double)op1 != (int)op2;
+                    }
+                    else if (op1 is double && op2 is char)
+                    {
+                        return (double)op2 != (int)((char)(op2));
+                    }
+                    else if (op1 is char && op2 is double)
+                    {
+                        return (int)((char)(op1)) != (double)op2;
+                    }
+                    else if (op1 is bool && op2 is double)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 == (double)op2;
+                    }
+                    else if (op1 is double && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (double)op1 != o2;
+                    }
+                    else if (op1 is double && op2 is double)
+                    {
+                        return (double)op1 != (double)op2;
+                    } //Tipo resultante de datos: Entero
+                    else if (op1 is int && op2 is char)
+                    {
+                        return (int)op1 != (int)((char)op2);
+                    }
+                    else if (op1 is char && op2 is int)
+                    {
+                        return (int)((char)op1) != (int)op2;
+                    }
+                    else if (op1 is bool && op2 is int)
+                    {
+                        int o1 = (bool)op1 ? 1 : 0;
+                        return o1 != (int)op2;
+                    }
+                    else if (op1 is int && op2 is bool)
+                    {
+                        int o2 = (bool)op1 ? 1 : 0;
+                        return (int)op1 != o2;
+                    }
+                    else if (op1 is int && op2 is int)
+                    {
+                        return (int)op1 != (int)op2;
+                    } //Tipo resultante de datos: Cadena
+                    else if (op1 is string || op2 is string)
+                    {
+                        return !op1.ToString().Equals(op2.ToString());
+                    } //Tipo resultante de datos: Bool
+                    else if (op1 is bool && op2 is bool)
+                    {
+                        return (bool)op1 != (bool)op2;
+                    }
+                    break;
+                #endregion
+
+                #region Logicas
+                case Operador.OR:
+                    if (op1 is bool && op2 is bool)
                     {
                         return (bool)op1 || (bool)op2;
                     }
                     else
                     {
-                        Console.WriteLine("error de tipos");
-                        //Program.getGUI().appendSalida("Error de tipos en la suma");
+                        Console.WriteLine("Error de tipos, se utilizo un operador"
+                                + " or, ambos operandos deben ser de tipo bool");
+                        return null;
                     }
-                    break;
+                case Operador.AND:
+                    if (op1 is bool && op2 is bool)
+                    {
+                        return (bool)op1 && (bool)op2;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo un operador"
+                                + " and, ambos operandos deben ser de tipo bool");
+                        return null;
+                    }
+                case Operador.NOT:
+                    if (opU is bool)
+                    {
+                        return !(bool)op1;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error de tipos, se utilizo un operador"
+                                + " not, el operando debe ser de tipo bool");
+                        return null;
+                    }
+                #endregion
+                default:
+                    break;         
+
             }
             return null;
-        }        
+        }
 
         public string get3D()
         {

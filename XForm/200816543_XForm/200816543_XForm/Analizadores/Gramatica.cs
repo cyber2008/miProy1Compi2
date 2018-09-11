@@ -42,8 +42,8 @@ namespace _200816543_XForm.Analizadores
                 miFor = ToTerm("repetir"),
                 miHasta = ToTerm("hasta"),
                 miPrint = ToTerm("imprimir"),
-                miVerdadero = ToTerm("verdadero"),
-                miFalso = ToTerm("falso")
+                miVerdadero = ToTerm("verdadero", "miVerdadero"),
+                miFalso = ToTerm("falso", "miFalso")
                 ;
 
                 MarkReservedWords("entero", "decimal", "cadena", "caracter",
@@ -65,6 +65,7 @@ namespace _200816543_XForm.Analizadores
                     potencia = ToTerm("^"),
                     modulo = ToTerm("%"),
                     coma = ToTerm(","),
+                    punto = ToTerm("."),
                     ptComa = ToTerm(";"),
                     igual = ToTerm("="),
                     masMas = ToTerm("++"),
@@ -147,28 +148,29 @@ namespace _200816543_XForm.Analizadores
             ;
             #endregion
 
-            S.Rule = //EXP; 
-                CUERPO;
+            S.Rule = CUERPO;
 
             CUERPO.Rule = MakePlusRule(CUERPO, CAMPOS);
 
             CAMPOS.Rule = METODO
-                        //| DECLARACION
+                        | DECLARACION + ptComa;
                         //| id
                         //| SENTENCIA_CLASE
                         ;
 
-            METODO.Rule = //TIPO + id + parizq + LISTA_PARAM + parder + SENTENCIAS
-                        //| id + id + parizq + LISTA_PARAM + parder + SENTENCIAS
-                        //| TIPO + id + parizq + parder + SENTENCIAS
-                        //| id + id + parizq +parder + SENTENCIAS
-                        //| 
-                        TIPO + miPrincipal + parizq + parder + SENTENCIAS
+            METODO.Rule =  TIPO + id + parizq + LISTA_PARAM + parder + SENTENCIAS
+                          | id + id + parizq + LISTA_PARAM + parder + SENTENCIAS
+                          | TIPO + id + parizq + parder + SENTENCIAS
+                          | id + id + parizq +parder + SENTENCIAS
+                          | miPrincipal + parizq + parder + SENTENCIAS
                         ;
 
-            //LISTA_PARAM.Rule = MakePlusRule(LISTA_PARAM, coma, PARAMETRO);
+            LISTA_PARAM.Rule = MakePlusRule(LISTA_PARAM, coma, PARAMETRO);
 
-            //PARAMETRO.Rule = TIPO + id;
+            PARAMETRO.Rule = TIPO + id;
+
+            //Lista de atributos
+            //atributo
 
             SENTENCIAS.Rule = llaveizq + LISTA_SENTENCIA+ llaveder;
 
@@ -176,12 +178,12 @@ namespace _200816543_XForm.Analizadores
 
             SENTENCIA.Rule = DECLARACION + ptComa
                               /*| ASIGNACION + ptComa
-                              | ACCESO + ptComa
+                              | ACCESO + ptComa*/
                               | LLAMADA + ptComa
-                              | SENTENCIA_IF
-                              | SENTENCIA_WHILE
+                              /*| SENTENCIA_IF
+                              | SENTENCIA_WHILE*/
                               | SENTENCIA_RETURN + ptComa
-                              | SENTENCIA_BREAK + ptComa
+                              /*| SENTENCIA_BREAK + ptComa
                               | SENTENCIA_CONTINUE + ptComa*/
                               | SENTENCIA_PRINT + ptComa
                               //| SENTENCIA_CLASE + ptComa
@@ -203,12 +205,12 @@ namespace _200816543_XForm.Analizadores
                                 ;
 
             SENTENCIA_WHILE.Rule = miWhile + parizq + EXP + parder + SENTENCIAS
-                ;
+                ;*/
 
             SENTENCIA_RETURN.Rule = miRetorno + EXP
                                     | miRetorno;
 
-            SENTENCIA_BREAK.Rule = miRomper;
+            /*SENTENCIA_BREAK.Rule = miRomper;
 
             SENTENCIA_CONTINUE.Rule = miContinuar;*/
 
@@ -216,11 +218,11 @@ namespace _200816543_XForm.Analizadores
 
             //Pendiente sentencia struct
 
-            /*LLAMADA.Rule = id + parizq + LISTA_ARG + parder
+            LLAMADA.Rule = id + parizq + LISTA_ARG + parder
                           | id + parizq + parder
                           ;
 
-            ACCESO.Rule = id + "." + id;*/
+            /*ACCESO.Rule = id + "." + id;*/
 
             EXP.Rule = EXP_ARIT //YAPP
                        | EXP_LOG
@@ -228,7 +230,7 @@ namespace _200816543_XForm.Analizadores
                        | TIPO_PRIM //YAPP
                        // | ACCESO
                        | parizq + EXP + parder
-                       //| LLAMADA
+                       | LLAMADA
                        ;
 
             EXP_LOG.Rule = EXP + miOr + EXP
@@ -253,7 +255,6 @@ namespace _200816543_XForm.Analizadores
                 | EXP + potencia + EXP //YAPP
                 | EXP + menosMenos
                 | EXP + masMas
-                //| MT_LLAMADA
         ;
 
             TIPO_PRIM.Rule = number //YAPP
@@ -264,12 +265,12 @@ namespace _200816543_XForm.Analizadores
                         | id
                         ;
 
-            /*LISTA_ARG.Rule = MakeStarRule(LISTA_ARG, coma, EXP);*/
+            LISTA_ARG.Rule = MakeStarRule(LISTA_ARG, coma, EXP);
 
             TIPO.Rule = miBooleano
                 | miCaracter
                 | miCadena
-                | miEntero
+                | miEntero //YA
                 | miDecimal
                 | miVacio
                 ;
@@ -289,24 +290,8 @@ namespace _200816543_XForm.Analizadores
             RegisterOperators(9, Associativity.Right, masMas, menosMenos, not);
             
 
-            MarkPunctuation(parizq, parder, llaveder, llaveizq, ptComa, coma, igual);
-            
-
-            /*RegisterOperators(1, "||");
-            RegisterOperators(2, "&&");
-            RegisterOperators(3, "==", "!=");
-            RegisterOperators(4, "<", "<=",">",">=");
-            RegisterOperators(5, "+", "-");
-            RegisterOperators(6, "*", "/", "%");
-            //RegisterOperators(8, "(", ")");*/
+            MarkPunctuation(parizq, parder, llaveder, llaveizq, ptComa, coma, igual, punto);          
             #endregion
-
-            //RegisterOperators(7, Associativity.Right, "--");
-            //RegisterOperators(7, Associativity.Right, "++");
-            //RegisterOperators(7, Associativity.Right, "!");
-            //RegisterOperators(7, Associativity.Right, "+");
-            //RegisterOperators(7, Associativity.Right, "-");
-            //RegisterOperators(7, Associativity.Right, "*");
         }
     }
 }

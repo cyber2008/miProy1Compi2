@@ -39,6 +39,7 @@ namespace _200816543_XForm.ambito
 
         //Obtener un simbolo en base a una clave
         public Simbolo get(string id) {
+            try { 
             for (Ambito a = this; a != null; a = a.anterior) {
 
                 Simbolo siEncontro = (Simbolo)(a.tabla[id]);
@@ -46,8 +47,13 @@ namespace _200816543_XForm.ambito
                     return siEncontro;
                 }
             }
+                return null;
+            }
+            catch { 
             Console.WriteLine("El simbolo: "+id+ "no se declaro en el ambito actual ni externo (ambito.Ambito)");
             return null;
+            }
+         
         }
 
         public void reemplaza(string id, Simbolo nuevoVal) {

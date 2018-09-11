@@ -10,9 +10,13 @@ namespace _200816543_XForm.ambito.simbolos
 {
     public class Principal:Funcion
     {
-        public Principal(Tipos tipo, string identificador, LinkedList<Simbolo> listaParametros, LinkedList<NodoAST> instrucciones)
-        :base (tipo, identificador, listaParametros, instrucciones)
+        public Principal(string identificador, LinkedList<Simbolo> listaParametros, LinkedList<NodoAST> instrucciones)
+        : base(identificador, listaParametros, instrucciones)
         {
         }
+        //public Principal(Tipos tipo, string identificador, LinkedList<Simbolo> listaParametros, LinkedList<NodoAST> instrucciones)
+        //:base (tipo, identificador, listaParametros, instrucciones)
+        //{
+        //}
     }
 }

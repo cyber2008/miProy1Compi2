@@ -13,10 +13,24 @@ namespace _200816543_XForm.ambito.simbolos
         private string strTipoClase;
         private LinkedList<NodoAST> llInstrucciones;
 
-        public Funcion(Tipos tipo, string strId, LinkedList<Simbolo> llListaParam, LinkedList<NodoAST> llInstrucciones)
-        :base(tipo, strId, llListaParam){
+        //public Funcion(Tipos tipo, string strId, LinkedList<Simbolo> llListaParam, LinkedList<NodoAST> llInstrucciones)
+        //:base(tipo, strId, llListaParam){
+        //    strTipoClase = string.Empty;
+        //    this.llInstrucciones = llInstrucciones;
+        //}
+
+        public Funcion(string strId, LinkedList<Simbolo> llListaParam, LinkedList<NodoAST> llInstrucciones)
+       : base(strId, llListaParam)
+        {
             strTipoClase = string.Empty;
             this.llInstrucciones = llInstrucciones;
+        }
+
+        public Funcion(Tipos tipo, string identificador, LinkedList<Simbolo> listaParametros, LinkedList<NodoAST> instrucciones)
+    : base(identificador, tipo, listaParametros)
+        {
+            strTipoClase = string.Empty;
+            this.llInstrucciones = instrucciones;
         }
         public object ejecutar(Ambito amb, AST arbol)
         {

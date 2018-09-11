@@ -60,12 +60,14 @@
     <Compile Include="Analizadores\ConstructorAst.cs" />
     <Compile Include="Analizadores\Gramatica.cs" />
     <Compile Include="ast\AST.cs" />
+    <Compile Include="ast\cambioFlujo\Retorno.cs" />
     <Compile Include="ast\funcionesEspeciales\Imprimir.cs" />
     <Compile Include="ast\miBase\Exp.cs" />
     <Compile Include="ast\miBase\Instruccion.cs" />
     <Compile Include="ast\miBase\miClase.cs" />
     <Compile Include="ast\miBase\NodoAST.cs" />
     <Compile Include="ast\valorImplicito\Identificador.cs" />
+    <Compile Include="ast\valorImplicito\Llamada.cs" />
     <Compile Include="ast\valorImplicito\Operacion.cs" />
     <Compile Include="ast\valorImplicito\Tipo_Prim.cs" />
     <Compile Include="Diseño\DiseñoComponentes.cs" />

@@ -1,6 +1,7 @@
 ﻿using _200816543_XForm.ambito;
 using _200816543_XForm.ambito.simbolos;
 using _200816543_XForm.ast;
+using _200816543_XForm.ast.cambioFlujo;
 using _200816543_XForm.ast.funcionesEspeciales;
 using _200816543_XForm.ast.miBase;
 using _200816543_XForm.ast.valorImplicito;
@@ -40,16 +41,38 @@ namespace _200816543_XForm.Analizadores
             else if (posActualGram(actual, "METODO")) {
                 if (actual.ChildNodes.Count == 4)
                 {
-                    //hacer algo
+                    if (posActualGram(actual.ChildNodes[0], "TIPO"))
+                    {
+                        return new Funcion((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1), (LinkedList<Simbolo>)aux(actual.ChildNodes[2]), (LinkedList<NodoAST>)aux(actual.ChildNodes[3]));
+                    }
+                    else {
+                        //Devolvera una clase
+                    }
                 }
                 else {
                     if (posActualGram(actual.ChildNodes[0], "TIPO")) {
-                        if (posActualGram(actual.ChildNodes[1], "miPrincipal")) {
-                            return new Principal((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]));
-                        }
+                        return new Funcion((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]));
+                    }
+
+                    if (posActualGram(actual.ChildNodes[0], "miPrincipal"))
+                    {
+                        return new Principal(getLexema(actual, 0), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[1]));
+                        //return new Principal((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]));
                     }
                 }
             }
+            else if (posActualGram(actual, "LISTA_PARAM")) {
+                LinkedList<Simbolo> llParametros = new LinkedList<Simbolo>();
+                foreach (ParseTreeNode hijo in actual.ChildNodes) {
+                    llParametros.AddLast((Simbolo)aux(hijo));
+                }
+                return llParametros;
+            }
+
+            else if (posActualGram(actual, "PARAMETRO")) {
+                return new Simbolo((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1));
+            }
+
             else if (posActualGram(actual, "SENTENCIAS")) {
                 return aux(actual.ChildNodes[0]);
             }
@@ -76,14 +99,36 @@ namespace _200816543_XForm.Analizadores
                     else {
                         //DeclaracionClase
                     }
-                    
+
                 }
             }
             //else if (posActualGram(actual, "ASIGNACION")) {
 
             //}
+            else if (posActualGram(actual, "SENTENCIA_RETURN"))
+            {
+                if (actual.ChildNodes.Count == 2)
+                {
+                    return new Retorno((Exp)aux(actual.ChildNodes[1]));
+                }
+                else
+                {
+                    return new Retorno();
+                }
+            }
+            else if (posActualGram(actual, "LLAMADA"))
+            {
+                if (actual.ChildNodes.Count == 2)
+                {
+                    return new Llamada(getLexema(actual, 0), (LinkedList<Exp>)aux(actual.ChildNodes[1]));
+                }
+                else
+                {
+                    return new Llamada(getLexema(actual, 0));
+                }
+            }
             else if (posActualGram(actual, "SENTENCIA_PRINT")) {
-                return new Imprimir((Exp) aux(actual.ChildNodes[1]));
+                return new Imprimir((Exp)aux(actual.ChildNodes[1]));
             }
 
             else if (posActualGram(actual, "LISTA_IDS")) {
@@ -127,25 +172,54 @@ namespace _200816543_XForm.Analizadores
                     aux = aux.Substring(1, aux.Length - 2);
                     return new Tipo_Prim(aux);
                 }
+                else if (posActualGram(actual.ChildNodes[0], "caracter"))
+                {
+                    string aux = getLexema(actual, 0);
+                    char chResult = Convert.ToChar(aux.Substring(1, 1));
+                    return new Tipo_Prim(chResult);
+
+                }
+                else if (posActualGram(actual.ChildNodes[0], "miVerdadero")) {
+
+                    return new Tipo_Prim(true);
+                }
+                else if (posActualGram(actual.ChildNodes[0], "miFalso")) {
+                    return new Tipo_Prim(false);
+                }
                 else if (posActualGram(actual.ChildNodes[0], "id"))
                 {
                     return new Identificador(getLexema(actual, 0));
                 }
-                //else if () {
+            }
+            else if (posActualGram(actual, "LISTA_ARG")) {
 
-                //}
-
+                LinkedList<Exp> llArg = new LinkedList<Exp>();
+                foreach (ParseTreeNode hijo in actual.ChildNodes) {
+                    llArg.AddLast((Exp)aux(hijo));
+                }
+                return llArg;
             }
             else if (posActualGram(actual, "TIPO"))
             {
                 if (posActualGram(actual.ChildNodes[0], "entero")) {
                     return Tipos.INT;
                 }
+                else if (posActualGram(actual.ChildNodes[0], "decimal")) {
+                    return Tipos.DOUBLE;
+                } else if (posActualGram(actual.ChildNodes[0], "booleano")) {
+
+                    return Tipos.BOOL;
+                }
+                else if (posActualGram(actual.ChildNodes[0], "cadena")) {
+                    return Tipos.STRING;
+                }
+                else if (posActualGram(actual.ChildNodes[0], "caracter")) {
+                    return Tipos.CHAR;
+                }
                 else
                 {
                     return Tipos.OBJET;
                 }
-
             }
 
             return null;

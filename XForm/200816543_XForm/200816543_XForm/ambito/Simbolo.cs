@@ -49,6 +49,13 @@ namespace _200816543_XForm.ambito
             funcion = false;
         }
 
+        public Simbolo(string id, object valor)
+        {
+            this.id = id;
+            this.valor = valor;
+            funcion = false;
+        }
+
         //Constructor para definicion de funciones
         public Simbolo(string id, Tipos tipo, LinkedList<Simbolo> listaParam ) {
             this.id = id;
