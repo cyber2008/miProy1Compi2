@@ -62,6 +62,8 @@
     <Compile Include="ast\AST.cs" />
     <Compile Include="ast\cambioFlujo\Retorno.cs" />
     <Compile Include="ast\funcionesEspeciales\Imprimir.cs" />
+    <Compile Include="ast\instControl\sentIf.cs" />
+    <Compile Include="ast\miBase\Condicional.cs" />
     <Compile Include="ast\miBase\Exp.cs" />
     <Compile Include="ast\miBase\Instruccion.cs" />
     <Compile Include="ast\miBase\miClase.cs" />

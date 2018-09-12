@@ -84,6 +84,12 @@ namespace _200816543_XForm.ast.valorImplicito
             this.signoOp = signoOp;
         }
 
+        public Operacion(Exp operandoU, Operador operador)
+        {
+            this.signoOpUnario = operandoU;
+            this.signoOp = operador;
+        }
+
         public Simbolo.Tipos getTipo(Ambito amb, AST arbol)
         {
             object valor = getValorImplicito(amb, arbol);

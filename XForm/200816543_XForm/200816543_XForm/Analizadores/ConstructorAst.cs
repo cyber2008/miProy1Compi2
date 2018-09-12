@@ -3,6 +3,7 @@ using _200816543_XForm.ambito.simbolos;
 using _200816543_XForm.ast;
 using _200816543_XForm.ast.cambioFlujo;
 using _200816543_XForm.ast.funcionesEspeciales;
+using _200816543_XForm.ast.instControl;
 using _200816543_XForm.ast.miBase;
 using _200816543_XForm.ast.valorImplicito;
 using Irony.Parsing;
@@ -34,9 +35,25 @@ namespace _200816543_XForm.Analizadores
                 return new AST(instrucciones);
             }
             else if (posActualGram(actual, "CAMPOS")) {
-                if (actual.ChildNodes.Count == 1) {
+                if (actual.ChildNodes.Count == 1)
+                {
                     return aux(actual.ChildNodes[0]);
                 }
+                //-------------------------------------------------------------------------
+            else if (posActualGram(actual, "CAMPOS"))
+                {
+                    if (actual.ChildNodes.Count == 1)
+                    {
+                        return aux(actual.ChildNodes[0]);
+                    }
+                    else
+                    {
+                        //return new DefinicionClase(getLexema(actual, 1), (LinkedList<Declaracion>)aux(actual.ChildNodes[2]));
+                    }
+                }
+                //-------------------------------------------------------------------------
+
+
             }
             else if (posActualGram(actual, "METODO")) {
                 if (actual.ChildNodes.Count == 4)
@@ -45,9 +62,10 @@ namespace _200816543_XForm.Analizadores
                     {
                         return new Funcion((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1), (LinkedList<Simbolo>)aux(actual.ChildNodes[2]), (LinkedList<NodoAST>)aux(actual.ChildNodes[3]));
                     }
-                    else {
+                    else {//----------------------------------------------------------------
                         //Devolvera una clase
-                    }
+                        //return new Funcion(getLexema(actual, 0), getLexema(actual, 1), (LinkedList<Simbolo>)aux(actual.ChildNodes[2]), (LinkedList<NodoAST>)aux(actual.ChildNodes[3]));
+                    }//---------------------------------------------------------------------
                 }
                 else {
                     if (posActualGram(actual.ChildNodes[0], "TIPO")) {
@@ -59,6 +77,15 @@ namespace _200816543_XForm.Analizadores
                         return new Principal(getLexema(actual, 0), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[1]));
                         //return new Principal((Tipos)aux(actual.ChildNodes[0]), getLexema(actual, 1), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]));
                     }
+                    //--------------------------------------------------------------------------
+                    if (posActualGram(actual.ChildNodes[0], "id"))
+                    {
+                        //Devolvera una clase
+                        //return new Funcion(getLexema(actual, 0), getLexema(actual, 1), new LinkedList<Simbolo>(), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]));
+                    }
+                    //--------------------------------------------------------------------------
+
+
                 }
             }
             else if (posActualGram(actual, "LISTA_PARAM")) {
@@ -98,10 +125,37 @@ namespace _200816543_XForm.Analizadores
                     }
                     else {
                         //DeclaracionClase
+                        //---------------------------------------------------------------
+                        //return new DeclaracionClase(getLexema(actual, 0), getLexema(actual, 1));
+                        //---------------------------------------------------------------
+
                     }
 
                 }
             }
+
+            else if (posActualGram(actual, "LISTA_IDS"))
+            {
+                LinkedList<Simbolo> llSimbolos = new LinkedList<Simbolo>();
+                foreach (ParseTreeNode hijo in actual.ChildNodes)
+                {
+                    llSimbolos.AddLast(new Simbolo(hijo.Token.Text));
+                }
+                return llSimbolos;
+            }
+
+            else if (posActualGram(actual, "SENTENCIA_IF"))
+            {
+                if (actual.ChildNodes.Count == 3)
+                {
+                    return new sentIf((Exp)aux(actual.ChildNodes[1]), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]), new LinkedList<NodoAST>());
+                }
+                else
+                {
+                    return new sentIf((Exp)aux(actual.ChildNodes[1]), (LinkedList<NodoAST>)aux(actual.ChildNodes[2]), (LinkedList<NodoAST>)aux(actual.ChildNodes[4]));
+                }
+            }
+
             //else if (posActualGram(actual, "ASIGNACION")) {
 
             //}
@@ -131,14 +185,6 @@ namespace _200816543_XForm.Analizadores
                 return new Imprimir((Exp)aux(actual.ChildNodes[1]));
             }
 
-            else if (posActualGram(actual, "LISTA_IDS")) {
-                LinkedList<Simbolo> llSimbolos = new LinkedList<Simbolo>();
-                foreach (ParseTreeNode hijo in actual.ChildNodes) {
-                    llSimbolos.AddLast(new Simbolo(hijo.Token.Text));
-                }
-                return llSimbolos;
-            }
-
             else if (posActualGram(actual, "EXP")) {
 
                 return aux(actual.ChildNodes[0]);
@@ -149,6 +195,23 @@ namespace _200816543_XForm.Analizadores
                 {
                     return new Operacion((Exp)aux(actual.ChildNodes[0]), (Exp)aux(actual.ChildNodes[2]), Operacion.getOperador(getLexema(actual, 1)));
                 }
+            }
+            else if (posActualGram(actual, "EXP_REL"))
+            {
+
+                return new Operacion((Exp)aux(actual.ChildNodes[0]), (Exp)aux(actual.ChildNodes[2]), Operacion.getOperador(getLexema(actual, 1)));
+            }
+            else if (posActualGram(actual, "EXP_LOG"))
+            {
+                if (actual.ChildNodes.Count == 3)
+                {
+                    return new Operacion((Exp)aux(actual.ChildNodes[0]), (Exp)aux(actual.ChildNodes[2]), Operacion.getOperador(getLexema(actual, 1)));
+                }
+                else if (actual.ChildNodes.Count == 2)
+                {
+                    return new Operacion((Exp)aux(actual.ChildNodes[1]), Operacion.Operador.NOT);
+                }
+
             }
             else if (posActualGram(actual, "TIPO_PRIM")) {
 

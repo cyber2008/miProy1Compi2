@@ -180,8 +180,8 @@ namespace _200816543_XForm.Analizadores
                               /*| ASIGNACION + ptComa
                               | ACCESO + ptComa*/
                               | LLAMADA + ptComa
-                              /*| SENTENCIA_IF
-                              | SENTENCIA_WHILE*/
+                              | SENTENCIA_IF
+                              /*| SENTENCIA_WHILE*/
                               | SENTENCIA_RETURN + ptComa
                               /*| SENTENCIA_BREAK + ptComa
                               | SENTENCIA_CONTINUE + ptComa*/
@@ -200,11 +200,11 @@ namespace _200816543_XForm.Analizadores
 
             LISTA_IDS.Rule = MakePlusRule(LISTA_IDS, coma, id);
 
-            /*SENTENCIA_IF.Rule = miIf + parizq + EXP + parder + SENTENCIAS
+            SENTENCIA_IF.Rule = miIf + parizq + EXP + parder + SENTENCIAS
                                 | miIf + parizq + EXP + parder + SENTENCIAS + miElse + SENTENCIAS
                                 ;
 
-            SENTENCIA_WHILE.Rule = miWhile + parizq + EXP + parder + SENTENCIAS
+            /*SENTENCIA_WHILE.Rule = miWhile + parizq + EXP + parder + SENTENCIAS
                 ;*/
 
             SENTENCIA_RETURN.Rule = miRetorno + EXP
@@ -225,12 +225,12 @@ namespace _200816543_XForm.Analizadores
             /*ACCESO.Rule = id + "." + id;*/
 
             EXP.Rule = EXP_ARIT //YAPP
-                       | EXP_LOG
-                       | EXP_REL
+                       | EXP_LOG   //YAP
+                       | EXP_REL   //YAP
                        | TIPO_PRIM //YAPP
                        // | ACCESO
-                       | parizq + EXP + parder
-                       | LLAMADA
+                       | parizq + EXP + parder //YAP
+                       | LLAMADA    //YAP
                        ;
 
             EXP_LOG.Rule = EXP + miOr + EXP
